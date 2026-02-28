@@ -1,0 +1,5 @@
+﻿00:52:04  [  OK  ]  Livn Tools v3.5 baslatildi.
+00:52:04  [ INFO ]  Hosgeldin Kvvn @ LIVNLOUD
+00:52:04  [ INFO ]  Yedek klasoru: C:\Users\Kvvn\Documents\LivnTools\_Files\Backups
+00:52:04  [ INFO ]  Log dosyasi: C:\Users\Kvvn\Documents\LivnTools\_Files\Logs\LivnTools_20260301_005158.txt
+00:52:04  [ INFO ]  ─────────────────────────────────────────

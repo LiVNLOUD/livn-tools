@@ -1,0 +1,7 @@
+﻿00:43:58  [  OK  ]  Livn Tools v3.5 baslatildi.
+00:43:58  [ INFO ]  Hosgeldin Kvvn @ LIVNLOUD
+00:43:58  [ INFO ]  Yedek klasoru: C:\Users\Kvvn\Documents\LivnTools\_Files\Backups
+00:43:58  [ INFO ]  Log dosyasi: C:\Users\Kvvn\Documents\LivnTools\_Files\Logs\LivnTools_20260301_004352.txt
+00:43:58  [ INFO ]  ─────────────────────────────────────────
+00:44:16  [  OK  ]  GPU algilandi:
+► NVIDIA GeForce RTX 2080 | Driver: 32.0.15.9186
