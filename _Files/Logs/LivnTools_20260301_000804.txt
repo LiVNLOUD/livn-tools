@@ -1,5 +1,0 @@
-﻿00:08:10  [  OK  ]  Livn Tools v3.5 baÅŸlatÄ±ldÄ±.
-00:08:10  [ INFO ]  HoÅŸgeldin Kvvn @ LIVNLOUD
-00:08:10  [ INFO ]  Yedek klasÃ¶rÃ¼: C:\Users\Kvvn\Documents\LivnTools\_Files\Backups
-00:08:10  [ INFO ]  Log dosyasÄ±: C:\Users\Kvvn\Documents\LivnTools\_Files\Logs\LivnTools_20260301_000804.txt
-00:08:10  [ INFO ]  â
