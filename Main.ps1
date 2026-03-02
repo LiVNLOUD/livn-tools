@@ -3197,23 +3197,18 @@ $BtnRunAdvClean.Add_Click({
                 if (Test-Path $key) { Set-ItemProperty -Path $key -Name "StateFlags$sageset" -Value 2 -ErrorAction SilentlyContinue }
             }
             try {
-                $cleanProc = Start-Process cleanmgr.exe -ArgumentList "/sagerun:$sageset" -PassThru -ErrorAction SilentlyContinue
-                if ($cleanProc) {
-                    # Max 180 saniye bekle, sonra devam et
-                    $waited = 0
-                    while (-not $cleanProc.HasExited -and $waited -lt 180) {
-                        Start-Sleep -Seconds 2
-                        $waited += 2
-                    }
-                    if ($cleanProc.HasExited) {
-                        Write-Log "Disk Cleanup tamamlandi (ExitCode: $($cleanProc.ExitCode))." 'OK'
-                    } else {
-                        # Kullanıcı pencereyi kapattı veya timeout — process'i sonlandır, devam et
-                        $cleanProc.Kill() 2>&1 | Out-Null
-                        Write-Log "Disk Cleanup: pencere kapatildi veya zaman asimi — devam ediliyor." 'WARN'
-                    }
+                Start-Process cleanmgr.exe -ArgumentList "/sagerun:$sageset" -ErrorAction SilentlyContinue
+                # cleanmgr child process spawn ediyor, tum instance'larin bitmesini bekle
+                $timeout = 180; $elapsed = 0
+                do {
+                    Start-Sleep -Seconds 2; $elapsed += 2
+                    $running = Get-Process -Name cleanmgr -EA SilentlyContinue
+                } while ($running -and $elapsed -lt $timeout)
+                if ($elapsed -ge $timeout) {
+                    Get-Process -Name cleanmgr -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
+                    Write-Log "Disk Cleanup: zaman asimi — devam ediliyor." 'WARN'
                 } else {
-                    Write-Log "Disk Cleanup baslatılamadi." 'WARN'
+                    Write-Log "Disk Cleanup tamamlandi." 'OK'
                 }
             } catch {
                 Write-Log "Disk Cleanup hatasi: $_" 'WARN'
@@ -3351,26 +3346,9 @@ $BtnApplyPerf.Add_Click({
                     Write-Log "ISLC: Monitoring baslatildi ($monArgs)." 'OK'
                 } catch { Write-Log "ISLC baslatma hatasi: $_" 'WARN' }
 
-                # Gorev Zamanlayici
-                try {
-                    $tN = 'LivnTools_ISLC'
-                    $xA = @(
-                        '<?xml version="1.0" encoding="UTF-16"?>',
-                        '<Task version="1.4" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">',
-                        '  <RegistrationInfo><Description>Livn Tools - ISLC</Description></RegistrationInfo>',
-                        "  <Triggers><LogonTrigger><Enabled>true</Enabled><UserId>$env:USERDOMAIN\$env:USERNAME</UserId></LogonTrigger></Triggers>",
-                        "  <Principals><Principal id=`"Author`"><UserId>$env:USERDOMAIN\$env:USERNAME</UserId><LogonType>InteractiveToken</LogonType><RunLevel>HighestAvailable</RunLevel></Principal></Principals>",
-                        '  <Settings><MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>false</StopIfGoingOnBatteries><AllowHardTerminate>true</AllowHardTerminate><ExecutionTimeLimit>PT0S</ExecutionTimeLimit></Settings>',
-                        "  <Actions Context=`"Author`"><Exec><Command>$islcPath</Command><Arguments>$monArgs</Arguments></Exec></Actions>",
-                        '</Task>'
-                    )
-                    $xF = [System.IO.Path]::GetTempFileName() + '.xml'
-                    [System.IO.File]::WriteAllLines($xF, $xA, [System.Text.Encoding]::Unicode)
-                    schtasks.exe /Delete /TN $tN /F 2>&1 | Out-Null
-                    schtasks.exe /Create /TN $tN /XML $xF /F 2>&1 | Out-Null
-                    Remove-Item $xF -Force -EA SilentlyContinue
-                    Write-Log "ISLC: Gorev Zamanlayici guncellendi ($tN)." 'OK'
-                } catch { Write-Log "ISLC: Zamanlayici hatasi: $_" 'WARN' }
+                # NOT: ISLC -minimized parametresi ile baslatildiginda
+                # "Launch ISLC on user logon (TaskScheduler)" secenegini kendi aktif ediyor.
+                # Ayri Gorev Zamanlayici olusturmaya gerek yok.
             }
         }
 
