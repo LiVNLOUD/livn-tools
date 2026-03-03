@@ -4,16 +4,8 @@
 ::  Sag tiklayip "Yonetici olarak calistir"
 :: ─────────────────────────────────────────────
 
-:: Admin değilse UAC ile kendini yeniden başlat
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-    powershell -Command "Start-Process '%~f0' -Verb RunAs"
-    exit /b
-)
-
-:: Main.ps1 ile aynı klasörde çalış
+:: Main.ps1 ile ayni klasorde calis
 cd /d "%~dp0"
 
-:: PowerShell penceresini başlat, bu CMD penceresini kapat
-start "" powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%~dp0Main.ps1"
-exit
+:: Main.ps1 kendi admin kontrolunu yapiyor, direkt calistir
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Main.ps1"
