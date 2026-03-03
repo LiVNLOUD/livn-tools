@@ -1,127 +1,108 @@
-#Requires -Version 5.1
-<#
-.SYNOPSIS
-    Livn Tools v3.5 - Remote Installer
-    Usage: irm livn.tr/win | iex
-.DESCRIPTION
-    GitHub'dan Livn Tools dosyalarini indirir ve baslatir.
-    Yonetici yetkisi gerektirir.
-    ISLC kurulumu (parametreler + Gorev Zamanlayici) uygulamadan
-    Performance > Uygula butonuna tiklandiginda otomatik yapilir.
-#>
+# Livn Tools v3.5 — Installer
+# irm livn.tr/win | iex
 
-# ─── ADMIN CHECK ───────────────────────────────────────────────────────────────
-if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Host ""
-    Write-Host "  [!] Yonetici yetkisi gerekli." -ForegroundColor Red
-    Write-Host "  [!] PowerShell'i Yonetici olarak acin ve tekrar deneyin." -ForegroundColor Red
-    Write-Host ""
-    Write-Host "  Komut:" -ForegroundColor Yellow
-    Write-Host "  irm livn.tr/win | iex" -ForegroundColor Cyan
-    Write-Host ""
-    pause
-    exit 1
+$ErrorActionPreference = 'Stop'
+$ProgressPreference    = 'SilentlyContinue'
+
+$repo    = "https://raw.githubusercontent.com/LiVNLOUD/livn-tools/main"
+$install = "$env:USERPROFILE\Documents\LivnTools"
+
+$banner = @"
+
+  v3.5 | Windows Optimization Suite | livn.tr   github.com/LiVNLOUD/livn-tools
+  ─────────────────────────────────────────────────────────────────────────────
+"@
+Write-Host $banner -ForegroundColor Cyan
+
+# Klasor
+if (-not (Test-Path $install)) { New-Item -ItemType Directory -Path $install -Force | Out-Null }
+Write-Host "  [] Kurulum klasoru: $install" -ForegroundColor DarkGray
+
+# Indirme fonksiyonu
+function Get-File {
+    param([string]$Url, [string]$Dest, [bool]$Optional=$false)
+
+    $label = Split-Path $Dest -Leaf
+    $dir   = Split-Path $Dest -Parent
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+
+    $ok = $false
+
+    # 1. Invoke-WebRequest (TLS 1.2)
+    try {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest -Uri $Url -OutFile $Dest -UseBasicParsing -TimeoutSec 30
+        $ok = $true
+    } catch {}
+
+    # 2. curl.exe fallback
+    if (-not $ok) {
+        try {
+            & curl.exe -sS -L --tlsv1.2 -o $Dest $Url 2>$null
+            if (Test-Path $Dest) { $ok = $true }
+        } catch {}
+    }
+
+    # 3. BitsTransfer fallback
+    if (-not $ok) {
+        try {
+            Import-Module BitsTransfer -EA Stop
+            Start-BitsTransfer -Source $Url -Destination $Dest -EA Stop
+            $ok = $true
+        } catch {}
+    }
+
+    if ($ok) {
+        Write-Host "  [OK]  $label" -ForegroundColor Green
+    } elseif ($Optional) {
+        Write-Host "  [SKIP] $label (optional)" -ForegroundColor DarkGray
+    } else {
+        Write-Host "  [ERR] $label — indirilemedi" -ForegroundColor Red
+        return $false
+    }
+    return $true
 }
 
-# ─── BANNER ────────────────────────────────────────────────────────────────────
-Clear-Host
-Write-Host ""
-Write-Host "  ██╗     ██╗██╗   ██╗███╗   ██╗    ████████╗ ██████╗  ██████╗ ██╗     ███████╗" -ForegroundColor Magenta
-Write-Host "  ██║     ██║██║   ██║████╗  ██║    ╚══██╔══╝██╔═══██╗██╔═══██╗██║     ██╔════╝" -ForegroundColor Magenta
-Write-Host "  ██║     ██║██║   ██║██╔██╗ ██║       ██║   ██║   ██║██║   ██║██║     ███████╗" -ForegroundColor Magenta
-Write-Host "  ██║     ██║╚██╗ ██╔╝██║╚██╗██║       ██║   ██║   ██║██║   ██║██║     ╚════██║" -ForegroundColor Magenta
-Write-Host "  ███████╗██║ ╚████╔╝ ██║ ╚████║       ██║   ╚██████╔╝╚██████╔╝███████╗███████║" -ForegroundColor Magenta
-Write-Host "  ╚══════╝╚═╝  ╚═══╝  ╚═╝  ╚═══╝       ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚══════╝" -ForegroundColor Magenta
-Write-Host ""
-Write-Host "  v3.5  |  Windows Optimization Suite  |  livn.tr" -ForegroundColor DarkMagenta
-Write-Host "  github.com/LiVNLOUD/livn-tools" -ForegroundColor DarkGray
-Write-Host ""
-Write-Host "  ─────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
-Write-Host ""
+Write-Host "  [] Dosyalar indiriliyor..." -ForegroundColor DarkGray
 
-# ─── CONFIG ────────────────────────────────────────────────────────────────────
-$RepoBase   = "https://raw.githubusercontent.com/LiVNLOUD/livn-tools/main"
-$InstallDir = Join-Path $env:USERPROFILE "Documents\LivnTools"
-
-$FilesToDownload = @(
-    # Ana scriptler (zorunlu)
-    @{ Url = "$RepoBase/Main.ps1";      Dest = "Main.ps1";      Optional = $false },
-    @{ Url = "$RepoBase/LivnTools.bat"; Dest = "LivnTools.bat"; Optional = $false },
-
-    # Guc planlari
-    @{ Url = "$RepoBase/_Files/Bitsum-Highest-Performance.pow";                 Dest = "_Files\Bitsum-Highest-Performance.pow";                Optional = $true },
-    @{ Url = "$RepoBase/_Files/HybredPowerPlans/HybredLowLatencyHighPerf.pow"; Dest = "_Files\HybredPowerPlans\HybredLowLatencyHighPerf.pow"; Optional = $true },
-    @{ Url = "$RepoBase/_Files/HybredPowerPlans/HybredLowLatencyBalanced.pow"; Dest = "_Files\HybredPowerPlans\HybredLowLatencyBalanced.pow"; Optional = $true },
-
-    # Win32 Priority registry dosyalari
-    @{ Url = "$RepoBase/_Files/Win32Prio_Balanced_TheHybred.reg"; Dest = "_Files\Win32Prio_Balanced_TheHybred.reg"; Optional = $true },
-    @{ Url = "$RepoBase/_Files/Win32Prio_BestFPS_TheHybred.reg";  Dest = "_Files\Win32Prio_BestFPS_TheHybred.reg";  Optional = $true },
-    @{ Url = "$RepoBase/_Files/Win32Prio_Default_TheHybred.reg";  Dest = "_Files\Win32Prio_Default_TheHybred.reg";  Optional = $true },
-
-    # ISLC - Intelligent Standby List Cleaner (Wagnardsoft)
-    @{ Url = "$RepoBase/_Files/ISLC/Intelligent standby list cleaner ISLC.exe"; Dest = "_Files\ISLC\Intelligent standby list cleaner ISLC.exe"; Optional = $true },
-    @{ Url = "$RepoBase/_Files/ISLC/Intelligent standby list cleaner ISLC.pdb"; Dest = "_Files\ISLC\Intelligent standby list cleaner ISLC.pdb"; Optional = $true },
-    @{ Url = "$RepoBase/_Files/ISLC/ReadMe_ISLC.txt";                            Dest = "_Files\ISLC\ReadMe_ISLC.txt";                            Optional = $true }
-)
-
-# ─── KLASORLER ─────────────────────────────────────────────────────────────────
-Write-Host "  [*] Kurulum klasoru: $InstallDir" -ForegroundColor Cyan
-Write-Host ""
-
-foreach ($sub in @("_Files", "_Files\Backups", "_Files\Logs", "_Files\HybredPowerPlans", "_Files\ISLC")) {
-    $path = Join-Path $InstallDir $sub
-    if (-not (Test-Path $path)) { New-Item -Path $path -ItemType Directory -Force | Out-Null }
-}
-
-# ─── DOSYALARI INDIR ───────────────────────────────────────────────────────────
-Write-Host "  [*] Dosyalar indiriliyor..." -ForegroundColor Cyan
-Write-Host ""
-
-$wc = [System.Net.WebClient]::new()
-$wc.Encoding = [System.Text.Encoding]::UTF8
 $errors = 0
 
-foreach ($file in $FilesToDownload) {
-    $destPath = Join-Path $InstallDir $file.Dest
-    $destDir  = Split-Path $destPath -Parent
-    if (-not (Test-Path $destDir)) { New-Item -Path $destDir -ItemType Directory -Force | Out-Null }
-    try {
-        $wc.DownloadFile($file.Url, $destPath)
-        Write-Host "  [ OK ] $($file.Dest)" -ForegroundColor Green
-    } catch {
-        if ($file.Optional) {
-            Write-Host "  [SKIP] $($file.Dest) (optional)" -ForegroundColor DarkYellow
-        } else {
-            Write-Host "  [ERR ] $($file.Dest) — $_" -ForegroundColor Red
-            $errors++
-        }
-    }
-}
+if (-not (Get-File "$repo/Main.ps1"      "$install\Main.ps1"))      { $errors++ }
+if (-not (Get-File "$repo/LivnTools.bat" "$install\LivnTools.bat")) { $errors++ }
 
-$wc.Dispose()
+Get-File "$repo/_Files/Bitsum-Highest-Performance.pow"                "$install\_Files\Bitsum-Highest-Performance.pow"                $true
+Get-File "$repo/_Files/HybredPowerPlans/HybredLowLatencyHighPerf.pow" "$install\_Files\HybredPowerPlans\HybredLowLatencyHighPerf.pow" $true
+Get-File "$repo/_Files/HybredPowerPlans/HybredLowLatencyBalanced.pow" "$install\_Files\HybredPowerPlans\HybredLowLatencyBalanced.pow" $true
+Get-File "$repo/_Files/Win32Prio_Balanced_TheHybred.reg"               "$install\_Files\Win32Prio_Balanced_TheHybred.reg"               $true
+Get-File "$repo/_Files/Win32Prio_BestFPS_TheHybred.reg"                "$install\_Files\Win32Prio_BestFPS_TheHybred.reg"                $true
+Get-File "$repo/_Files/Win32Prio_Default_TheHybred.reg"                "$install\_Files\Win32Prio_Default_TheHybred.reg"                $true
+Get-File "$repo/_Files/ISLC/Intelligent standby list cleaner ISLC.exe" "$install\_Files\ISLC\Intelligent standby list cleaner ISLC.exe" $true
+Get-File "$repo/_Files/ISLC/Intelligent standby list cleaner ISLC.pdb" "$install\_Files\ISLC\Intelligent standby list cleaner ISLC.pdb" $true
+Get-File "$repo/_Files/ISLC/ReadMe_ISLC.txt"                           "$install\_Files\ISLC\ReadMe_ISLC.txt"                           $true
 
-# ─── HATA KONTROLU ─────────────────────────────────────────────────────────────
-Write-Host ""
 if ($errors -gt 0) {
-    Write-Host "  [!] $errors dosya indirilemedi. Internet baglantinizi kontrol edip tekrar deneyin." -ForegroundColor Red
     Write-Host ""
-    pause
+    Write-Host "  [!] $errors zorunlu dosya indirilemedi." -ForegroundColor Red
+    Write-Host "      Internet baglantinizi kontrol edip tekrar deneyin." -ForegroundColor DarkGray
+    Write-Host ""
+    Read-Host "  Devam etmek icin Enter'a basin"
     exit 1
 }
 
-# ─── BASLATMA ──────────────────────────────────────────────────────────────────
-Write-Host "  ─────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 Write-Host ""
-Write-Host "  [ OK ] Kurulum tamamlandi!" -ForegroundColor Green
-Write-Host ""
-Write-Host "  ISLC (RAM Optimizasyonu) kurulumu ucin:" -ForegroundColor DarkGray
-Write-Host "  Performance > Standby / Modified List seceneklerini isaretleyip Uygula'ya tiklayin." -ForegroundColor DarkGray
-Write-Host ""
-Write-Host "  Livn Tools baslatiliyor..." -ForegroundColor Magenta
-Write-Host ""
-Start-Sleep -Milliseconds 800
+Write-Host "  [] Baslatiliyor..." -ForegroundColor DarkGray
 
-$mainScript = Join-Path $InstallDir "Main.ps1"
-Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$mainScript`"" -Verb RunAs
+# Admin kontrolu — admin degilse UAC ile yeniden ac, adminse direkt calistir
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
+    [Security.Principal.WindowsBuiltInRole]::Administrator)
 
-exit 0
+if ($isAdmin) {
+    # Zaten admin — direkt calistir
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$install\Main.ps1"
+} else {
+    # Admin degil — UAC ile yeniden ac ve bekle
+    $proc = Start-Process powershell.exe `
+        -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$install\Main.ps1`"" `
+        -Verb RunAs -PassThru
+    $proc.WaitForExit()
+}
