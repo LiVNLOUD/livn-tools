@@ -21,7 +21,7 @@ Describe 'Kurtarma kiti planı' {
         $all.Count | Should -Be 6
         @($all | Where-Object { $_.Group -eq 'Network' }).Count | Should -Be 2
         @($all | Where-Object { $_.Group -eq 'Display' }).Count | Should -Be 1
-        $plan = Get-LtKitPlan -Target $usb -Options (Get-AllOptions)
+        $plan = Get-LtKitPlan -Target $usb -SystemDrive '' -Options (Get-AllOptions)
         $plan.DriverCounts.Network | Should -Be 2
         $plan.DriverCounts.Display | Should -Be 0
         $plan.DriverCounts.Other | Should -Be 3
@@ -46,7 +46,7 @@ Describe 'Kurtarma kiti planı' {
     It 'Ağ sürücüsü yoksa ve Wi-Fi seçiliyse uyarır; kuru çalışma açıkça belirtilir' {
         $sys.Mem.Drivers = @($sys.Mem.Drivers | Where-Object { $_.Class -ne 'Net' })
         $o = Get-AllOptions; $o.Wifi = $true
-        $plan = Get-LtKitPlan -Target $usb -Options $o
+        $plan = Get-LtKitPlan -Target $usb -SystemDrive '' -Options $o
         ($plan.Warnings -join ' ') | Should -Match 'ağ sürücüsü bulunamadı'
         ($plan.Warnings -join ' ') | Should -Match 'DÜZ METİN'
         ($plan.Warnings -join ' ') | Should -Match 'Kuru çalışma'
@@ -71,7 +71,7 @@ Describe 'Kurtarma kiti oluşturma (kuru çalışma)' {
 
     It 'Klasör yapısı, kit.json ve KIT_OKU.txt oluşur; kit DENEME olarak işaretlenir' {
         [void](Invoke-LtApply -TweakIds 'game.mode' -Context $sys.Ctx)
-        $k = New-LtRecoveryKit -Target $usb -Options (Get-AllOptions) -Context $sys.Ctx -AppRoot $script:RepoRoot -Now ([datetime]'2026-10-02 14:30')
+        $k = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options (Get-AllOptions) -Context $sys.Ctx -AppRoot $script:RepoRoot -Now ([datetime]'2026-10-02 14:30')
         $k.Path | Should -BeLike (Join-Path $usb 'LivnKurtarma-20261002-1430-DENEME')
         $root = $k.Path
         [IO.File]::Exists((Join-Path $root 'kit.json')) | Should -BeTrue
@@ -96,7 +96,7 @@ Describe 'Kurtarma kiti oluşturma (kuru çalışma)' {
 
     It 'Livn copy errors cannot produce success and are persisted in the manifest' {
         Mock -ModuleName LivnTools Copy-LtDirectoryTree { @{ Files = 0; Bytes = 0; Skipped = 0; Failed = 2; Cancelled = $false } }
-        $k = New-LtRecoveryKit -Target $usb -Options (Get-AllOptions) -Context $sys.Ctx -AppRoot $script:RepoRoot
+        $k = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options (Get-AllOptions) -Context $sys.Ctx -AppRoot $script:RepoRoot
         ($k.Parts | Where-Object Name -eq 'Livn Tools').Status | Should -Be 'Failed'
         $k.Status | Should -Be 'Partial'
         $k.Manifest.Contents.Livn | Should -BeFalse
@@ -108,14 +108,14 @@ Describe 'Kurtarma kiti oluşturma (kuru çalışma)' {
 
     It 'Missing application root fails instead of promising an offline launcher' {
         $o = Get-AllOptions; $o.NetDrivers = $false; $o.OtherDrivers = $false; $o.Apps = $false; $o.Saves = $false
-        $k = New-LtRecoveryKit -Target $usb -Options $o -Context $sys.Ctx
+        $k = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options $o -Context $sys.Ctx
         $k.Status | Should -Be 'Failed'
         $k.Manifest.Contents.Livn | Should -BeFalse
     }
 
     It 'Complete application copy is successful and every required file exists' {
         $o = Get-AllOptions; $o.Saves = $false
-        $k = New-LtRecoveryKit -Target $usb -Options $o -Context $sys.Ctx -AppRoot $script:RepoRoot
+        $k = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options $o -Context $sys.Ctx -AppRoot $script:RepoRoot
         $k.Status | Should -Be 'Success'
         @(Get-LtKitMissingAppFiles (Join-Path $k.Path 'LivnTools')).Count | Should -Be 0
         (Read-LtRecoveryKit $k.Path).HasLivn | Should -BeTrue
@@ -126,7 +126,7 @@ Describe 'Kurtarma kiti oluşturma (kuru çalışma)' {
         Mock -ModuleName LivnTools Export-LtWifiProfiles { throw 'must not start' }
         Mock -ModuleName LivnTools Copy-LtDirectoryTree { throw 'must not start' }
         $o = Get-AllOptions; $o.Wifi = $true
-        $k = New-LtRecoveryKit -Target $usb -Options $o -Context $sys.Ctx -AppRoot $script:RepoRoot -Cancel @{ Requested = $true }
+        $k = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options $o -Context $sys.Ctx -AppRoot $script:RepoRoot -Cancel @{ Requested = $true }
         $k.Status | Should -Be 'Cancelled'
         $k.Manifest.Contents.Apps | Should -BeFalse
         $k.Manifest.Contents.Livn | Should -BeFalse
@@ -139,7 +139,7 @@ Describe 'Kurtarma kiti oluşturma (kuru çalışma)' {
         $cancel = @{ Requested = $false }
         Mock -ModuleName LivnTools Export-LtDriverPackage { $cancel.Requested = $true; @{ Ok = $true } }
         Mock -ModuleName LivnTools Get-LtSetupInventory { throw 'must not start' }
-        $k = New-LtRecoveryKit -Target $usb -Options (Get-AllOptions) -Context $sys.Ctx -Cancel $cancel
+        $k = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options (Get-AllOptions) -Context $sys.Ctx -Cancel $cancel
         $k.Status | Should -Be 'Cancelled'
         @($k.Manifest.Drivers).Count | Should -Be 1
         Should -Invoke -ModuleName LivnTools Get-LtSetupInventory -Times 0 -Exactly
@@ -155,8 +155,8 @@ Describe 'Kurtarma kiti oluşturma (kuru çalışma)' {
     It 'Wi-Fi seçilince parola uyarısı kite yazılır; aynı dakikada ikinci kit ayrı klasöre gider' {
         $o = Get-AllOptions; $o.Wifi = $true; $o.Saves = $false
         $now = [datetime]'2026-10-02 14:30'
-        $a = New-LtRecoveryKit -Target $usb -Options $o -Context $sys.Ctx -Now $now
-        $b = New-LtRecoveryKit -Target $usb -Options $o -Context $sys.Ctx -Now $now
+        $a = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options $o -Context $sys.Ctx -Now $now
+        $b = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options $o -Context $sys.Ctx -Now $now
         $b.Path | Should -Not -Be $a.Path
         @([IO.Directory]::GetFiles((Join-Path $a.Path 'WiFi'), '*.xml')).Count | Should -Be 1
         [IO.File]::ReadAllText((Join-Path $a.Path 'KIT_OKU.txt')) | Should -Match 'parolalar düz metindir'
@@ -164,7 +164,7 @@ Describe 'Kurtarma kiti oluşturma (kuru çalışma)' {
 
     It 'İptal edilince sürücü dışa aktarma durur' {
         $cancel = [hashtable]::Synchronized(@{ Requested = $true })
-        $k = New-LtRecoveryKit -Target $usb -Options (Get-AllOptions) -Context $sys.Ctx -Cancel $cancel
+        $k = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options (Get-AllOptions) -Context $sys.Ctx -Cancel $cancel
         @($k.Manifest.Drivers).Count | Should -Be 0
     }
 }
@@ -174,7 +174,7 @@ Describe 'Kurtarma kitini okuma (güvenilmeyen girdi)' {
         $sys = New-LtTestSystem
         $usb = New-TempDir 'usb'
         $sys.Mem.KitSaveSources = @()
-        $k = New-LtRecoveryKit -Target $usb -Options (Get-AllOptions) -Context $sys.Ctx
+        $k = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options (Get-AllOptions) -Context $sys.Ctx
         $kitRoot = $k.Path
     }
     AfterEach { Remove-LtTestSystem $sys; Remove-Item -LiteralPath $usb -Recurse -Force -ErrorAction SilentlyContinue }
@@ -229,7 +229,7 @@ Describe 'Formattan sonra geri yükleme (kuru çalışma)' {
         [IO.File]::WriteAllText((Join-Path $saves 'a.sav'), '1')
         $sys.Mem.KitSaveSources = @(@{ Name = 'Saved Games'; Path = $saves; Restore = 'SavedGames' })
         $o = Get-AllOptions; $o.Wifi = $true; $o.GpuDrivers = $true
-        $kit = Read-LtRecoveryKit -Path (New-LtRecoveryKit -Target $usb -Options $o -Context $sys.Ctx).Path
+        $kit = Read-LtRecoveryKit -Path (New-LtRecoveryKit -Target $usb -SystemDrive '' -Options $o -Context $sys.Ctx).Path
         Mock -ModuleName LivnTools Invoke-LtNative { throw 'harici komut çalışmamalı' }
         $sys.Mem.Calls.Clear()
     }
@@ -340,7 +340,7 @@ Describe 'Kurtarma kiti arayüz akışı (WPF olmadan, iş gövdesi doğrudan)' 
         $usb = New-TempDir 'usb'
         $sys.Mem.KitSaveSources = @()
         $o = Get-AllOptions; $o.GpuDrivers = $true
-        $made = New-LtRecoveryKit -Target $usb -Options $o -Context $sys.Ctx
+        $made = New-LtRecoveryKit -Target $usb -SystemDrive '' -Options $o -Context $sys.Ctx
         $chk = { param($v) [pscustomobject]@{ IsChecked = $v } }
         $script:Ui = @{ Ctx = $sys.Ctx; Window = $null; Job = $null
             C = @{ TxtKitSummary = [pscustomobject]@{ Text = '' }; TxtStatus = [pscustomobject]@{ Text = '' }
