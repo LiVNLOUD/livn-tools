@@ -1,0 +1,38 @@
+name: PowerShell 5.1 diagnosis
+on:
+  push:
+    branches: ['diagnose/ps51']
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          . ./tests/TestHelpers.ps1
+          $sys = New-LtTestSystem
+          try {
+            $key = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management'
+            $sys.Mem.Pagefile.Automatic = $false
+            $sys.Mem.Pagefile.Settings = @(@{ Name = 'C:\pagefile.sys'; InitialSize = 2048; MaximumSize = 4096 }, @{ Name = 'D:\pagefile.sys'; InitialSize = 8192; MaximumSize = 16384 })
+            [void](Set-LtRegValue $key 'PagingFiles' -Kind MultiString -Data @('C:\pagefile.sys 2048 4096', 'D:\pagefile.sys 8192 16384'))
+            $before = Get-LtPagefileConfiguration
+            Write-Host ('BEFORE ' + (ConvertTo-Json -InputObject $before -Depth 10 -Compress))
+            $result = Invoke-LtApply -TweakIds 'mem.pagefile-auto' -Context $sys.Ctx
+            Write-Host ('APPLY ' + (ConvertTo-Json -InputObject $result -Depth 10 -Compress))
+            Write-Host ('LEDGER ' + (ConvertTo-Json -InputObject (Get-LtLedgerEntry 'Pagefile|System') -Depth 10 -Compress))
+            $result = Invoke-LtRevert -TweakIds 'mem.pagefile-auto' -Context $sys.Ctx -Target Previous
+            Write-Host ('RESTORE ' + (ConvertTo-Json -InputObject $result -Depth 10 -Compress))
+            Write-Host ('AFTER ' + (ConvertTo-Json -InputObject (Get-LtPagefileConfiguration) -Depth 10 -Compress))
+            Save-LtLatencyResult -Result (Invoke-LtLatencyTest)
+            Save-LtLatencyResult -Result (Invoke-LtLatencyTest)
+            Write-Host ('HISTORYJSON ' + [IO.File]::ReadAllText((Get-LtLatencyHistoryPath)))
+            Write-Host ('HISTORYCOUNT ' + @(Get-LtLatencyHistory).Count)
+            $raw = ConvertFrom-Json '[{"x":1},{"x":2}]'
+            Write-Host ('ARRAYTYPE ' + $raw.GetType().FullName + ' CUSTOM ' + ($raw -is [System.Management.Automation.PSCustomObject]))
+            Write-Host ('CONVERTED ' + (ConvertTo-Json -InputObject (ConvertTo-LtHashtable $raw) -Depth 5 -Compress))
+          } finally { Remove-LtTestSystem $sys }
