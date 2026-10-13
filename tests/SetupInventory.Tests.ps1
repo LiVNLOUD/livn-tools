@@ -113,11 +113,11 @@ Describe 'Envanter motoru' {
         Mock -ModuleName LivnTools -CommandName Test-LtLiveSystem -MockWith { $true }
         Mock -ModuleName LivnTools -CommandName Get-LtInteractiveUserSid -MockWith { 'S-1-5-21-1000' }
         Mock -ModuleName LivnTools -CommandName Get-LtWingetVersion -MockWith { [version]'1.9.25200' }
-        Mock -ModuleName LivnTools -CommandName Get-Command -ParameterFilter { $Name -eq 'winget.exe' } -MockWith { $null }
+        Mock -ModuleName LivnTools -CommandName Get-LtWingetPath -MockWith { throw 'WINGET_MISSING:test fixture' }
         Mock -ModuleName LivnTools -CommandName Get-LtWingetInstalledIds -MockWith { throw 'export çıkış kodu 5' }
         (Read-LtWingetInventory).Available | Should -BeFalse
         (Get-LtSetupInventory).Status | Should -Be 'WingetMissing'
-        Mock -ModuleName LivnTools -CommandName Get-Command -ParameterFilter { $Name -eq 'winget.exe' } -MockWith { [pscustomobject]@{ Source = 'C:\fake\winget.exe' } }
+        Mock -ModuleName LivnTools -CommandName Get-LtWingetPath -MockWith { 'C:\fake\winget.exe' }
         $inv = Get-LtSetupInventory
         $inv.Status | Should -Be 'Error'
         $inv.Message | Should -Match 'çıkış kodu 5'

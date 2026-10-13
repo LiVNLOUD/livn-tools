@@ -34,6 +34,7 @@ function New-LtThirdPartyFixture {
     else { [IO.File]::WriteAllText((Join-Path $files 'Bitsum-Highest-Performance.pow'), 'test fixture, not a power plan') }
     $exe = Join-Path $files 'ISLC/Intelligent standby list cleaner ISLC.exe'
     $type = 'LtIslcFixture' + [guid]::NewGuid().ToString('N')
-    Add-Type -TypeDefinition "[assembly: System.Reflection.AssemblyFileVersion(`"$IslcVersion`")] public class $type {}" -OutputAssembly $exe -OutputType Library
+    Add-Type -TypeDefinition "[assembly: System.Reflection.AssemblyFileVersion(`"$IslcVersion`")] public class $type {}" -OutputAssembly ($exe + ".dll") -OutputType Library
+    Move-Item -LiteralPath ($exe + ".dll") -Destination $exe
     return $app
 }

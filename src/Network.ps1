@@ -166,7 +166,11 @@ function Get-LtLatencyHistoryPath { Join-Path (Join-Path (Get-LtDataRoot) 'netwo
 function Get-LtLatencyHistory {
     $p = Get-LtLatencyHistoryPath
     if (-not (Test-Path -LiteralPath $p)) { return @() }
-    try { return @([IO.File]::ReadAllText($p) | ConvertFrom-Json -ErrorAction Stop | ConvertTo-LtHashtable) } catch { return @() }
+    try {
+        # PS 5.1 emits a JSON array as one pipeline object. Enumerate records explicitly.
+        $records = ConvertFrom-Json -InputObject ([IO.File]::ReadAllText($p)) -ErrorAction Stop
+        foreach ($record in @($records)) { ConvertTo-LtHashtable $record }
+    } catch { return @() }
 }
 
 function Save-LtLatencyResult {

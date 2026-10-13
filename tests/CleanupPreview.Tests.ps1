@@ -20,7 +20,11 @@ BeforeAll {
     }
     function Get-LtTreeSnapshot([string]$Root) {
         @(Get-ChildItem -LiteralPath $Root -Recurse -Force | Sort-Object FullName | ForEach-Object {
-            '{0}|{1}|{2}' -f $_.FullName, $(if ($_.PSIsContainer) { 'd' } else { $_.Length }), $_.LastWriteTimeUtc.Ticks
+            $_.Refresh()
+            # NTFS directory write times may be updated lazily after fixture creation.
+            # Check structure/attributes and file content instead of unstable directory times.
+            if ($_.PSIsContainer) { '{0}|d|{1}' -f $_.FullName, $_.Attributes }
+            else { '{0}|{1}|{2}|{3}' -f $_.FullName, $_.Length, $_.LastWriteTimeUtc.Ticks, (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
         })
     }
     $script:SideEffectFns = @('Remove-LtFolderContents', 'Remove-LtFileSafe', 'Stop-LtProcessSafe', 'Invoke-LtNative', 'Clear-LtRecycleBin',

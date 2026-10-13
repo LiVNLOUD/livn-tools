@@ -74,6 +74,10 @@ Describe 'Pagefile configuration and rollback' {
         Test-LtActionHasDefault $action | Should -BeFalse
         foreach ($p in (Get-LtPresets).Values) { $p.Ids | Should -Not -Contain 'mem.pagefile-auto' }
     }
+    It 'Treats the same drive configuration in a different order as equal' {
+        $sys.Mem.Pagefile.Settings = @($sys.Mem.Pagefile.Settings[1], $sys.Mem.Pagefile.Settings[0])
+        Test-LtSnapshotEqual $action (Get-LtPagefileConfiguration) $before | Should -BeTrue
+    }
     It 'Rejects equality when a single drive size differs' {
         $sys.Mem.Pagefile.Settings[1].MaximumSize = 32768
         Test-LtSnapshotEqual $action (Get-LtPagefileConfiguration) $before | Should -BeFalse

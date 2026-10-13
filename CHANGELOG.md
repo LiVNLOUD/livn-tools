@@ -1,5 +1,6 @@
-﻿# 13 Ekim 2026 — geliştirme (4.0.0, henüz etiketlenmedi)
+﻿# 4.0.0 — 13 Ekim 2026
 
+- Windows PowerShell 5.1: disk belleği snapshot sıralaması ve ağ ölçüm geçmişinin JSON dizi okuması düzeltildi.
 - Kurtarma kitinde başarısız/eksik Livn kopyası artık başarılı raporlanmaz; zorunlu uygulama dosyaları denetlenir.
 - İptal, kısmi başarı ve hata kit.json, KIT_OKU.txt ve arayüzde görünür; iptal sonrası yeni bölümler başlamaz.
 - Kopyalamada eksik kaynak, iç içe kaynak/hedef ve bağlantı noktaları denetlenir; var olan oyun kayıtları korunur.

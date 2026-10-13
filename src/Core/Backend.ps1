@@ -936,7 +936,7 @@ function Get-LtPagefileConfiguration {
         $settings = @(Get-CimInstance -Namespace 'root/cimv2' -ClassName Win32_PageFileSetting -ErrorAction Stop)
     }
     # Copy primitive values so later mutations cannot change a journal snapshot.
-    $rows = @($settings | Sort-Object Name | ForEach-Object {
+    $rows = @($settings | Sort-Object { [string]$_.Name } | ForEach-Object {
         @{ Name = [string]$_.Name; InitialSize = [uint32]$_.InitialSize; MaximumSize = [uint32]$_.MaximumSize }
     })
     @{ Automatic = $automatic; Settings = $rows; Raw = (Get-LtActionSnapshot (Get-LtPagefileRegistryAction)) }
@@ -990,7 +990,7 @@ function Test-LtPagefileConfigurationEqual {
     param($A, $B)
     if ([bool]$A.Automatic -ne [bool]$B.Automatic) { return $false }
     if (@($A.Settings).Count -ne @($B.Settings).Count) { return $false }
-    $left = @($A.Settings | Sort-Object Name); $right = @($B.Settings | Sort-Object Name)
+    $left = @($A.Settings | Sort-Object { [string]$_.Name }); $right = @($B.Settings | Sort-Object { [string]$_.Name })
     for ($i = 0; $i -lt $left.Count; $i++) {
         if ($left[$i].Name -ine $right[$i].Name -or
             [uint32]$left[$i].InitialSize -ne [uint32]$right[$i].InitialSize -or
