@@ -1,0 +1,4 @@
+data/
+dist/
+tests/results/
+*.log

@@ -1,0 +1,18 @@
+13 Ekim 2026 geliştirme güncellemesi: docs/DEVELOPMENT_STATUS.md. Aşağıdaki eski test notları tarihsel kayıttır.
+
+Livn Tools v4 - tam kaynak ve Windows test paketi
+Tarih: 1 Ekim 2026; temel: 7fe4439 paketi + r3 bağımsız denetim değişiklikleri (yerel; uzak depoya gönderilmedi)
+Yama değildir. Yeni, boş bir klasöre çıkarın. ZIP içinden çalıştırmayın.
+
+LivnTools.bat: gerçek Windows modu; UAC ister. Açmak tek başına tweak uygulamaz. Seçim/önizleme/onay sonrası gerçek değişiklik yapar.
+Test-Arayuz.bat: DryRun / DENEME MODU. Gerçek ayar uygulanmaz.
+Test-Windows.bat: Windows PowerShell 5.1 / WPF temel doğrulaması.
+
+Şu anki kontrollü test: Windows üzerinden saydamlık açıldı, EnableTransparency=1 doğrulandı. Normal modda yalnız saydamlığı kapatma ayarını seçin. Önizlemede yalnız 1 -> 0 varsa uygulayın. Bağımsız PowerShell okumasıyla 0 doğrulandıktan sonra Önceki ayara dön ile 1 kontrol edilir. Test sonunda kullanıcının ilk tercihi olan kapalı durum Windows ayarından geri seçilir. Toplu tweak veya temizlik bu teste dahil değildir.
+
+Önceki data, ledger, günlük ve kullanıcı seçimleri pakete dahil edilmedi. Yeni klasör bu testin önceki değerlerini ayrı saklar; eski çalışma klasörlerini silmeyin.
+
+ISLC ikilisi dahil değildir. Üç güç planı özgün r3-7 kaynak paketinde bulunur; varsayılan yayın ZIP dosyası bu planları içermez. Kaynak kod, 40 uygulamalı / 9 kategorili katalog, temizlik kataloğu ve test araçları dahildir.
+Windows 10/PS 5.1 SmokeOnly ve görünür DryRun başarılı. Gerçek sistem işlemleri, Win11 ve DPI kabulü tamamlanmadı. Bu paket release değildir; push/tag yapılmadı.
+
+Bu pakette yeni: Format Sonrası kurulu/kurulu değil/durum okunamadı göstergesi ve temizlik önizlemesi (salt okunur). Ayrıntı ve Windows kabul adımları: WORKLOG.md ve docs/WINDOWS_TEST_CHECKLIST.md (1 Ekim 2026 bölümü).

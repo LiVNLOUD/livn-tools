@@ -1,0 +1,83 @@
+name: Windows validation
+on:
+  push:
+    branches: [main, 'dev/**', 'release/**']
+  pull_request:
+  workflow_dispatch:
+env:
+  POWERSHELL_TELEMETRY_OPTOUT: '1'
+  POWERSHELL_UPDATECHECK: 'Off'
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install test dependencies
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          Install-PackageProvider NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
+          Install-Module Pester -RequiredVersion 5.6.1 -Scope CurrentUser -Force -SkipPublisherCheck
+          Install-Module PSScriptAnalyzer -RequiredVersion 1.23.0 -Scope CurrentUser -Force
+      - name: Parser, analyzer and Memory tests (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tools/Invoke-Tests.ps1
+      - name: WPF and Framework smoke validation
+        shell: powershell
+        run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File tools/Invoke-WindowsCheck.ps1
+      - name: Verify release manifest
+        shell: powershell
+        run: ./tools/Build-Release.ps1 -Version 4.0.0 -CheckOnly
+      - name: Build development archive
+        shell: powershell
+        run: ./tools/Build-Release.ps1 -Version 4.0.0 -Zip
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-validation
+          path: tests/results/
+      - name: Upload development archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: LivnTools-development
+          path: dist/LivnTools-4.0.0.zip
+
+  publish:
+    name: Publish verified release
+    needs: windows
+    if: startsWith(github.ref, 'refs/heads/release/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: LivnTools-development
+          path: dist
+      - name: Publish versioned ZIP and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME#release/}"
+          version="${tag#v}"
+          test "$tag" = "v4.0.0"
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/main --jq .object.sha)" = "$GITHUB_SHA"
+          test -s "dist/LivnTools-$version.zip"
+          (cd dist && sha256sum "LivnTools-$version.zip" > SHA256SUMS.txt)
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to replace it."
+            exit 1
+          fi
+          gh release create "$tag" "dist/LivnTools-$version.zip" dist/SHA256SUMS.txt \
+            --target "$GITHUB_SHA" --title "LivnTools $tag" \
+            --notes-file "docs/releases/$tag.md" --draft
+          gh release edit "$tag" --draft=false --latest

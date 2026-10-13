@@ -1,163 +1,148 @@
-<div align="center">
+﻿<div align="center">
 
-# ⚡ Livn Tools v3.5
+# ⚡ LivnTools
 
-**Windows 10/11 için sistem optimizasyon aracı**
+### Windows'u hazırla. Ayarlarını taşı. Kontrol sende kalsın.
 
-[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue?logo=powershell)](https://github.com/PowerShell/PowerShell)
-[![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D4?logo=windows)](https://www.microsoft.com/windows)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-3.5-purple)](https://github.com/LiVNLOUD/livn-tools/releases)
+Format öncesi kurtarma, format sonrası kurulum ve günlük bakım için<br>
+**PowerShell + WPF tabanlı kişisel Windows araç kutusu.**
+
+[![Release](https://img.shields.io/github/v/release/LiVNLOUD/livn-tools?color=8b5cf6&label=release)](https://github.com/LiVNLOUD/livn-tools/releases)
+[![Windows validation](https://github.com/LiVNLOUD/livn-tools/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/LiVNLOUD/livn-tools/actions/workflows/validate.yml)
+![Platform](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?logo=windows)
+![PowerShell](https://img.shields.io/badge/PowerShell-5.1-5391FE?logo=powershell&logoColor=white)
+
+**[İndir](https://github.com/LiVNLOUD/livn-tools/releases/latest)** · **[Başlangıç](#başlangıç)** · **[Kullanım rehberi](docs/USAGE.md)** · **[Değişiklikler](CHANGELOG.md)**
 
 </div>
 
 ---
 
-## 🚀 Hızlı Kurulum
+## Tek araç, üç kullanım
 
-PowerShell'i **Yönetici olarak** açın ve yapıştırın:
+| Formattan önce | Formattan sonra | Günlük kullanım |
+| :--- | :--- | :--- |
+| Ağ ve diğer donanım sürücülerini dışa aktar | Önce ağ sürücüsünü geri yükle | Sistem durumunu ve sorunları incele |
+| Uygulama listesini ve taşınabilir seçimlerini kaydet | WinGet ile seçtiğin uygulamaları kur | Temizlenecek alanı silmeden önce gör |
+| Livn kopyasını ve seçilen kayıtları USB'ye taşı | Ayarları yeni sistemde önizle ve uygula | Ayarları dene, önceki değerlerine dön |
+
+**85 ayar tanımı · 45 temizlik/bakım işlemi · 40 uygulama · 9 kategori · 6 hazır seçim**
+
+Sayılar katalog kapsamını gösterir; her seçenek her bilgisayarda kullanılabilir değildir. Desteklenmeyen seçeneklerde nedeni gösterilir.
+
+## Başlangıç
+
+### ZIP ile kullan
+
+1. [Son sürümden](https://github.com/LiVNLOUD/livn-tools/releases/latest) **`LivnTools-4.0.0.zip`** dosyasını indir.
+2. ZIP'i ayrı bir klasöre çıkar. ZIP içinden çalıştırma.
+3. **`LivnTools.bat`** dosyasını aç ve yönetici isteğini onayla.
+4. Sistem Kontrolü'nü incele; istediğin işlemleri seç ve **önizlemeyi kontrol ederek** uygula.
+
+Uygulamayı açmak tek başına tweak uygulamaz. Standart ZIP çalışma dosyalarını içerir; geliştirici testleri ve araçları için kaynak depoyu indir.
+
+### PowerShell ile kur
 
 ```powershell
-irm livn.tr/win | iex
+irm https://raw.githubusercontent.com/LiVNLOUD/livn-tools/v4.0.0/win.ps1 | iex
 ```
 
-> Araç `Documents\LivnTools` klasörüne kurulur ve otomatik başlar.
+Kurucu sürüme sabit dosyaları indirir; boyut ve SHA-256 doğrulanmadan mevcut kurulumu değiştirmez.
 
----
+| Konum | İçerik |
+| :--- | :--- |
+| `%LOCALAPPDATA%\LivnTools\app` | Kurulan uygulama |
+| `%LOCALAPPDATA%\LivnTools\data` | Günlükler, yedekler ve geri alma kayıtları |
+| ZIP kullanırken `<klasör>\data` | Taşınabilir kullanım verileri |
 
-## 📸 Ekran Görüntüleri
+Güncelleme kullanıcı verilerini silmez. Önceki uygulama `app.prev` olarak saklanır. Önceki kuruluma dönmek için:
 
-<table>
-  <tr>
-    <td align="center"><b>Quick Clean</b></td>
-    <td align="center"><b>Performance</b></td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/QuickClean.png" width="480"/></td>
-    <td><img src="docs/screenshots/Optimization-1.png" width="480"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Network</b></td>
-    <td align="center"><b>Kernel & Input</b></td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/Optimization-2.png" width="480"/></td>
-    <td><img src="docs/screenshots/Optimization-3.png" width="480"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>GPU & MSI</b></td>
-    <td align="center"><b>Privacy & Telemetry</b></td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/Optimization-4.png" width="480"/></td>
-    <td><img src="docs/screenshots/Optimization-5.png" width="480"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Windows Tweaks</b></td>
-    <td align="center"><b>Run Script</b></td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/Optimization-6.png" width="480"/></td>
-    <td><img src="docs/screenshots/RunScript.png" width="480"/></td>
-  </tr>
-</table>
-
----
-
-## 🗂 Dosya Yapısı
-
-```
-LivnTools/
-├── Main.ps1                                    ← Ana script (XAML UI + Backend)
-├── LivnTools.bat                               ← Manuel başlatıcı (Admin olarak çalıştır)
-├── win.ps1                                     ← Uzak yükleyici (irm livn.tr/win | iex)
-├── _Files/
-│   ├── Backups/                                ← Registry yedekleri (.reg)
-│   ├── Logs/                                   ← Terminal log dosyaları (.txt)
-│   ├── Bitsum-Highest-Performance.pow          ← Bitsum güç planı
-│   ├── HybredPowerPlans/
-│   │   ├── HybredLowLatencyHighPerf.pow        ← Hybred HighPerf güç planı
-│   │   └── HybredLowLatencyBalanced.pow        ← Hybred Balanced güç planı
-│   ├── Win32Prio_BestFPS_TheHybred.reg         ← Win32Priority tweak (0x14)
-│   ├── Win32Prio_Balanced_TheHybred.reg        ← Win32Priority tweak (0x18)
-│   ├── Win32Prio_Default_TheHybred.reg         ← Win32Priority tweak (0x26)
-│   └── ISLC/
-│       └── Intelligent standby list cleaner ISLC.exe  ← RAM optimizasyonu
-└── docs/
-    └── screenshots/                            ← Ekran görüntüleri
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/LiVNLOUD/livn-tools/v4.0.0/win.ps1))) -Rollback
 ```
 
----
+> SHA-256 indirme bütünlüğünü denetler; yayıncı imzası değildir. `livn.tr/win` ayrı bir yönlendirmedir. Bu sürüm için yukarıdaki GitHub adresi esas alınır.
 
-## 🛠 Özellikler
+### Sisteme dokunmadan dene
 
-### 🧹 Temizlik
-| Sekme | İçerik |
-|-------|--------|
-| **Quick Clean** | %TEMP%, System Temp, Prefetch, RecycleBin, Thumbnail/Font cache, DNS flush, Tarayıcı cache (Chrome/Edge/Firefox/Brave/Opera/Vivaldi/Tor), İletişim uygulamaları (Discord/Telegram/Slack/Zoom/Teams/Skype/Spotify), Oyun launcher'ları (Steam/Epic/GOG/Ubisoft/EA/Xbox/Battle.net/Rockstar/Riot/Minecraft), Event Logs, Crash Dumps, WinUpdate cache, Delivery Optimization |
-| **Advanced Clean** | WinSxS (DISM), SFC/DISM onarım, Hibernation, PageFile temizleme, USB bağlantı geçmişi |
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -STA -File .\Main.ps1 -DryRun
+```
 
-### ⚡ Optimizasyon
-| Sekme | İçerik |
-|-------|--------|
-| **Performance** | HPET (bcdedit), Timer Resolution 0.5ms, CPU Priority Boost, SysMain/WSearch kapatma, Game Mode, HW GPU Scheduling, **Güç planı seçimi** (Bitsum / Hybred HighPerf / Hybred Balanced / Ultimate / Balanced / Default), **Win32PrioritySeparation** (BestFPS 0x14 / Balanced 0x18 / Default 0x26), **RAM Optimizasyonu** (ISLC — Standby/Modified List temizleme + Görev Zamanlayıcı) |
-| **Network** | TCP AutoTuning, ECN, RSC, Congestion (CTCP), NetworkThrottlingIndex, Nagle/TCPNoDelay/TcpAckFrequency, RSS, NIC adapter tweaks (Flow Control, Interrupt Moderation, Green Ethernet, Giga Lite), DNS Prefetch, LLMNR/mDNS kapatma |
-| **Kernel & Input** | VBS, DMA Protection, Spectre/Meltdown mitigation, CFG, HVCI, Large Pages, DX Contiguous Memory, SecondLevelDataCache, PageFile optimize, Mouse/Keyboard buffer (MarkC Fix), Raw Input boost, Mouse Smoothing/Acceleration kapatma |
-| **GPU & MSI** | GPU algılama, MSI Mode (GPU/NVMe/NIC), IRQ Priority yükseltme, NVIDIA latency tweaks (PreRender/Power/VSync/ShaderCache/ULLS), AMD Anti-Lag/Chill/Power tweaks |
+DryRun bellek içindeki örnek sistemle açılır: gerçek ayarlar değiştirilmez, dosyalar temizlenmez, uygulamalar kurulmaz. Kaynak pakette **`Test-Arayuz.bat`** aynı amaçla kullanılabilir.
 
-### 🔒 Gizlilik & Sistem
-| Sekme | İçerik |
-|-------|--------|
-| **Privacy & Telemetry** | DiagTrack, dmwappushvc, CEIP, Telemetry Level 0, App Compat Telemetry, Error Reporting, Activity History, Cortana, Advertising ID, Tailored Experiences, Inking Personalization, OneDrive kaldırma, Xbox Services, Bing Search, Suggested Apps, Consumer Experience |
-| **Windows Tweaks** | Animasyon kapatma, Transparency, JPEG kalite %100, MenuShowDelay=0ms, Taskbar animasyonları, Dark Mode, BSOD detay kodu, Full Memory Dump, Explorer This PC, NumLock, Dosya uzantıları, Long Path Support, Eski sağ tık menüsü (Win11) |
-| **Run Script** | .ps1 / .bat / .cmd dosyası import et ve çalıştır |
+## Neler var?
 
----
+| Alan | Yapabileceklerin |
+| :--- | :--- |
+| **Sistem Kontrolü** | Sürücü, RAM, disk, yenileme hızı, hata kayıtları ve yeniden başlatma durumunu incele |
+| **Kurtarma Kiti** | Sürücüleri, uygulama listesini, Livn kopyasını ve seçilen kayıtları başka diske taşı |
+| **Format Sonrası** | Uygulamalarda ara, kurulum durumunu gör, seçimlerini profile kaydet ve yükle |
+| **Temizlik ve bakım** | Dosya/alan önizlemesi, desteklenen önbellekler, DISM ve SFC araçları |
+| **Performans ve GPU** | Güç planları, oyun tercihleri, donanıma bağlı GPU/MSI ayarları |
+| **Ağ** | Ping, dalgalanma, paket kaybı, DNS ölçümü ve seçilen adaptör ayarları |
+| **Windows ve gizlilik** | Görünüm, Explorer, oturum tercihleri ve desteklenen gizlilik ayarları |
+| **Başlangıç ve geçmiş** | Başlangıç uygulamalarını yönet, ayarları ve geri alma kayıtlarını incele |
 
-## 🎛 Global Presets
+**Hazır seçimler:** Oyuncu modu, Temel, Gizlilik, Görünüm, Akıcı görünüm ve Maksimum performans. Bunlar seçim yapar; uygulamadan önce önizleme gösterilir. Güvenliği azaltan ayarlar hazır seçimlere dahil değildir.
 
-| Preset | Açıklama |
-|--------|----------|
-| **Minimal** | Sadece temel, risksiz temizlik ve stabilite tweaks |
-| **Standard** | Gaming + Streaming için dengeli ayarlar |
-| **Aggressive** | Maksimum performans, düşük latency odaklı |
-| **Geri Dön** | Uygulanan tüm değişiklikleri geri al |
+## Değişiklikleri nasıl yönetir?
 
----
+- **Önce gör:** Mevcut değer, hedef değer, risk ve yeniden başlatma gereksinimi gösterilir.
+- **Önceki değeri sakla:** Uygulamadan önce ayar durumu diske kaydedilir.
+- **Yeniden oku:** İşlem sonrası durum denetlenir; hata ve kısmi sonuçlar ayrı raporlanır.
+- **Geri dön:** “Önceki ayara dön” kendi değerini; “Windows varsayılanı” katalogdaki varsayılanı kullanır.
 
-## 💾 Backup Sistemi
+Temizlik, kurulum/kaldırma, sürücü kurulumu ve kullanıcı betikleri ayar geri alma sistemi kapsamında değildir. Birden çok ayarın uygulanması tek bir atomik işlem değildir. [Geri alma kapsamı →](docs/SUPPORT_MATRIX.md#geri-alma-kapsamı)
 
-Her optimizasyon sayfasında **Backup** butonu bulunur. Uygula'ya basmadan önce yedek almak için Backup butonuna tıklayın. Yedekler `_Files\Backups` klasörüne `.reg` formatında kaydedilir.
+## v4.0.0 ile gelenler
 
-> ⚠️ Yedekleme **manueldir** — Backup butonuna siz tıklarsınız.
+- Modüler motor, işlem günlüğü ve durum doğrulaması.
+- Format öncesi kurtarma kiti ve format sonrası uygulama/profil akışı.
+- Eksik kopya ve iptal durumlarını doğru gösteren kit sonuçları.
+- IPv4/IPv6 DNS tercihlerini ayrı saklayan geri alma.
+- Temizlik önizlemesi, kurulu uygulama envanteri ve hedef aygıt seçimi.
+- Sürüme sabit, SHA-256 denetimli kurulum ve otomatik yayın paketi.
 
----
+## Gereksinimler ve kapsam
 
-## ⚙️ Gereksinimler
+- **Windows 10 22H2 / Windows 11, x64** hedeflenir.
+- **Windows PowerShell 5.1** ve gerçek işlemler için yönetici yetkisi gerekir.
+- Uygulama kurulumu için **WinGet** gerekir; otomatik WinGet kurulumu yapılmaz.
+- PowerShell 7 veya 32 bit kabuktan açılışta uygun Windows PowerShell kabuğuna geçilir.
 
-- Windows 10 veya Windows 11
-- PowerShell 5.1+
-- Yönetici (Administrator) yetkisi
+Kurtarma kiti tam disk imajı değildir. Belgeler, fotoğraflar, tarayıcı verileri ve lisans anahtarları ayrıca yedeklenmelidir. Wi-Fi dışa aktarımı seçilirse parolalar kitte düz metin saklanır. Oyun kayıt kapsamı `Saved Games` ve `Belgeler/My Games` ile sınırlıdır.
 
----
+ISLC ve üçüncü taraf güç planları standart yayın ZIP'ine dahil değildir. Kurulu planlar seçilebilir; üretici bağlantıları arayüzdedir. [Üçüncü taraf kapsamı →](docs/THIRD_PARTY.md)
 
-## 📋 Manuel Kullanım
+## Geliştirme ve doğrulama
 
-`irm` komutunu kullanmak istemiyorsanız:
+```powershell
+# Pester 5.6.1 ve PSScriptAnalyzer 1.23.0 ile
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Invoke-Tests.ps1
 
-1. Bu repoyu ZIP olarak indirin
-2. `LivnTools.bat` dosyasına sağ tıklayın → **Yönetici olarak çalıştır**
+# Windows PowerShell 5.1 / WPF; sistem ayarı uygulamaz
+powershell -NoProfile -STA -File .\tools\Invoke-WindowsCheck.ps1
 
----
+# Dağıtım ZIP'i
+powershell -NoProfile -File .\tools\Build-Release.ps1 -Version 4.0.0 -Zip
+```
 
-## ⚠️ Sorumluluk Reddi
+Linux kontrolünde **518 test geçti**, statik analiz **0 hata / 0 uyarı** verdi. Windows PowerShell 5.1, WPF ve paket bütünlüğü GitHub Actions üzerinden ayrıca denetlenir; güncel sonuç üstteki rozetten açılır. Otomatik testler gerçek donanımda bütün ayarların etkisini veya performans artışını kanıtlamaz.
 
-Bu araç registry ve sistem ayarlarında değişiklik yapar. **Uygulama öncesi Backup butonuna tıklamanız önerilir.** Kullanım tamamen kendi sorumluluğunuzdadır.
+| Belge | İçerik |
+| :--- | :--- |
+| [Kullanım rehberi](docs/USAGE.md) | Ekranlar, hazır seçimler, profiller ve işlem sınırları |
+| [Mimari](docs/ARCHITECTURE.md) | Motor, sağlayıcılar, arayüz ve veri akışı |
+| [Destek matrisi](docs/SUPPORT_MATRIX.md) | Platform, donanım ve geri alma koşulları |
+| [Windows kontrol listesi](docs/WINDOWS_TEST_CHECKLIST.md) | Görsel ve gerçek sistem kabul adımları |
+| [Geliştirme kaydı](docs/DEVELOPMENT_STATUS.md) | Son düzeltmeler ve doğrulama sınırları |
 
 ---
 
 <div align="center">
 
-**[livn.tr](https://livn.tr)** · **[GitHub](https://github.com/LiVNLOUD/livn-tools)**
+**LiVNLOUD / LivnTools**<br>
+Kişisel kullanım için geliştirildi. Ölçülmemiş FPS veya gecikme kazancı vaat etmez.
 
 </div>
