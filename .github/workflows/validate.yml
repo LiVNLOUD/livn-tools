@@ -15,14 +15,23 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Install test dependencies
+      - name: Install pinned test dependencies
+        timeout-minutes: 5
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-          Install-PackageProvider NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
-          Install-Module Pester -RequiredVersion 5.6.1 -Scope CurrentUser -Force -SkipPublisherCheck
-          Install-Module PSScriptAnalyzer -RequiredVersion 1.23.0 -Scope CurrentUser -Force
+          $modules = Join-Path $env:RUNNER_TEMP 'LivnModules'
+          foreach ($spec in @(@{ Name = 'Pester'; Version = '5.6.1' }, @{ Name = 'PSScriptAnalyzer'; Version = '1.23.0' })) {
+            $target = Join-Path (Join-Path $modules $spec.Name) $spec.Version
+            $zip = Join-Path $env:RUNNER_TEMP ($spec.Name + '.zip')
+            Write-Host ("Downloading {0} {1}" -f $spec.Name, $spec.Version)
+            Invoke-WebRequest -UseBasicParsing -Uri ("https://www.powershellgallery.com/api/v2/package/{0}/{1}" -f $spec.Name, $spec.Version) -OutFile $zip -TimeoutSec 90
+            Expand-Archive -LiteralPath $zip -DestinationPath $target -Force
+            $manifest = Test-ModuleManifest (Join-Path $target ($spec.Name + '.psd1'))
+            if ([string]$manifest.Version -ne $spec.Version) { throw 'Unexpected module version' }
+          }
+          "PSModulePath=$modules;$env:PSModulePath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Parser, analyzer and Memory tests (Windows PowerShell 5.1)
         shell: powershell
         run: ./tools/Invoke-Tests.ps1
