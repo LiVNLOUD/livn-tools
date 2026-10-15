@@ -1,8 +1,10 @@
-# LivnTools — 13 Ekim 2026 geliştirme durumu
+# LivnTools — 15 Ekim 2026 sürüm durumu
 
-Temel: `LivnTools_v4_Test_20261002_r3-7.zip` (SHA-256 `671793f7444512349e2aa9342fe6b1f00146c48b0c08125c52edd7be63d0f3a6`). Eski GitHub kodu geliştirme temeli değildir. Bu çalışma 4.0.0 geliştirme sürümüdür; kararlı sürüm etiketi oluşturulmadı.
+Temel: `LivnTools_v4_Test_20261002_r3-7.zip` (SHA-256 `671793f7444512349e2aa9342fe6b1f00146c48b0c08125c52edd7be63d0f3a6`). Eski GitHub kodu geliştirme temeli değildir. v4.0.0 yayın hazırlığı bu kaynak üzerinden yürütülür; release, otomatik Windows kontrollerinden geçen commit ile oluşturulur.
 
 ## Bu tur
+
+Windows PowerShell 5.1 koşusunda ayrıca disk belleği snapshot sıralaması ve ağ ölçüm geçmişinin JSON dizi okuması düzeltildi. Testlerde NTFS dizin zaman damgaları, örnek ISLC derlemesi, WinGet kurulumunun makineden bağımsız taklidi ve geçici kit hedefi Windows ile uyumlu hale getirildi. Test kapsamı kaldırılmadı.
 
 Kurtarma kitinin kopyalama hatası ve iptal sonucu düzeltilmiştir. Başarı yalnız tamamlanan bölümler için raporlanır. Zorunlu başlatıcı, modül ve arayüz dosyaları kaynakta ve hedefte denetlenir. Eksik kaynağın sıfır dosyayla başarılı sayılması, iç içe klasöre sonsuz kopya ve bağlantı noktası üzerinden dosya taşıma engellenir. Kit manifesti, metin yönergesi ve arayüz sonuçları eşleşir.
 
@@ -12,9 +14,9 @@ Paketleme mevcut olmayan LICENSE yüzünden durmaz ve proje adına lisans seçme
 
 ## Doğrulama
 
-Linux PowerShell 7.4.6 / Pester 5.6.1 ile 518/518 test geçti (0 atlandı; 74,96 saniye). Parser 57 dosyada hatasız; PSScriptAnalyzer 1.23.0 ile 26 ürün/araç dosyasında 0 hata, 0 uyarı. Önceki taban 505 testti; 13 regresyon senaryosu eklendi. Testler Memory backend kullanır. Test ortamında PowerShell telemetrisi kapalıdır. Windows sonuçları GitHub Actions üzerinde ayrıca raporlanır.
+Linux PowerShell 7.4.6 / Pester 5.6.1 ile 518/518 test geçti (0 atlandı; 74,96 saniye). Parser 57 dosyada hatasız; PSScriptAnalyzer 1.23.0 ile 26 ürün/araç dosyasında 0 hata, 0 uyarı. Önceki taban 505 testti; 13 regresyon senaryosu eklendi. Testler Memory backend kullanır. Test ortamında PowerShell telemetrisi kapalıdır. Bu Linux sonucu Windows uyarlamalarından önceki tabana aittir. Son Windows PowerShell 5.1 koşusunda 512 test geçti, 0 başarısız ve platforma bağlı 7 test atlandı (toplam 519). [Doğrulama kaydı](https://github.com/LiVNLOUD/livn-tools/actions/runs/38456215293).
 
-Windows iş akışı Windows PowerShell 5.1 altında Pester/statik analiz ile gerçek WPF nesne ve şablon oluşturmayı çalıştırır. Hiçbir tweak uygulamaz. Gerçek Windows 10/11 donanımında DNS değişimi/geri alma, sürücü dışa aktarma, USB iptal ve disk dolması, görünür WPF/DPI kabulü ayrıca gereklidir. CI başarısı bunları kanıtlamaz.
+Windows iş akışı Windows PowerShell 5.1 altında Pester/statik analiz ile gerçek WPF nesne ve şablon oluşturmayı çalıştırır. GitHub Windows makinesinde WPF kontrolü geçti: C# yardımcıları, ComboBox/ScrollBar şablonları, seçim olayları, kit oluşturma/yükleme ve iki pencere boyutunda içerik düzeni doğrulandı. Nihai test sonuçları sürüm commit’ine bağlı Actions kaydındadır. Hiçbir tweak uygulamaz. Gerçek Windows 10/11 donanımında DNS değişimi/geri alma, sürücü dışa aktarma, USB iptal ve disk dolması, görünür WPF/DPI kabulü ayrıca gereklidir. CI başarısı bunları kanıtlamaz.
 
 ## Sonraki kabul
 
@@ -22,6 +24,6 @@ Windows iş akışı Windows PowerShell 5.1 altında Pester/statik analiz ile ge
 2. DryRun kitte iptal ve eksik kaynak mesajlarının görsel kontrolü.
 3. Gerçek USB üzerinde sürücü/oyun kaydı kopyası, disk dolması ve iptal.
 4. IPv4 statik / IPv6 otomatik ve tersinin kontrollü uygulanıp geri alınması.
-5. Kabulden sonra sürüm numarası, manifest, tag ve GitHub Release.
+5. Yeni geliştirmelerde aynı CI kapısından geçen commit ile sürüm/manifest/tag tutarlılığını koruyun.
 
 DNS API kaynakları: [Get-DnsClientServerAddress](https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclientserveraddress), [Set-DnsClientServerAddress](https://learn.microsoft.com/en-us/powershell/module/dnsclient/set-dnsclientserveraddress).

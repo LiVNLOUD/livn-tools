@@ -1,5 +1,7 @@
 # Destek matrisi
 
+**15 Ekim 2026 CI güncellemesi:** GitHub Windows makinesinde Windows PowerShell 5.1 / .NET Framework ve gerçek WPF nesne, olay ve layout temel doğrulaması geçti. Güncel Pester/statik analiz sonucu [Actions](https://github.com/LiVNLOUD/livn-tools/actions/workflows/validate.yml) üzerinde sürüm commit’iyle eşleştirilir. Bu, fiziksel Windows 10/11 donanım kabulü veya Windows Server için ürün desteği anlamına gelmez. Aşağıdaki eski tarihli kayıtlar kendi kapsamlarıyla korunmuştur.
+
 Durum sütunu: **Hedef** = kod bu platform için yazıldı ve statik olarak denetlendi;
 **Test edildi** = yalnız belirtilen kapsam gerçek sistemde çalıştırıldı. 30 Eylül 2026 Windows 10 / PS 5.1 SmokeOnly ve görünür DryRun arayüz kontrolü geçti. Gerçek sistem ayarı/kurulum/geri alma ve Windows 11 kabulü açık (bkz. [WINDOWS_TEST_CHECKLIST.md](WINDOWS_TEST_CHECKLIST.md)).
 

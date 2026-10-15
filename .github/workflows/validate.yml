@@ -88,7 +88,7 @@ jobs:
           tag="${GITHUB_REF_NAME#release/}"
           version="${tag#v}"
           test "$tag" = "v4.0.0"
-          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/main --jq .object.sha)" = "$GITHUB_SHA"
+          test "$(gh api repos/$GITHUB_REPOSITORY/git/ref/heads/$GITHUB_REF_NAME --jq .object.sha)" = "$GITHUB_SHA"
           test -s "dist/LivnTools-$version.zip"
           (cd dist && sha256sum "LivnTools-$version.zip" > SHA256SUMS.txt)
           if gh release view "$tag" >/dev/null 2>&1; then
