@@ -43,6 +43,14 @@ Uygulamayı açmak tek başına tweak uygulamaz. Standart ZIP çalışma dosyala
 
 ### PowerShell ile kur
 
+Resmî kısa adres her zaman en güncel yayımlanmış release’i indirir:
+
+```powershell
+irm https://livn.tr/win | iex
+```
+
+Belirli bir sürümü kurmak için alternatif adres (v4.0.0):
+
 ```powershell
 irm https://raw.githubusercontent.com/LiVNLOUD/livn-tools/v4.0.0/win.ps1 | iex
 ```
@@ -61,7 +69,7 @@ Güncelleme kullanıcı verilerini silmez. Önceki uygulama `app.prev` olarak sa
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/LiVNLOUD/livn-tools/v4.0.0/win.ps1))) -Rollback
 ```
 
-> SHA-256 indirme bütünlüğünü denetler; yayıncı imzası değildir. `livn.tr/win` ayrı bir yönlendirmedir. Bu sürüm için yukarıdaki GitHub adresi esas alınır.
+> SHA-256 indirme bütünlüğünü denetler; yayıncı imzası değildir. `livn.tr/win` en güncel release’i takip eder; sürüme sabit GitHub adresi yalnız belirtilen sürümü kurar.
 
 ### Sisteme dokunmadan dene
 

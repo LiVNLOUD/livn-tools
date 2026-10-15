@@ -36,8 +36,10 @@ jobs:
         timeout-minutes: 3
         shell: powershell
         run: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File tools/Invoke-WindowsCheck.ps1
+      # Main documentation may advance beyond the immutable published tag.
+      # Release branches must carry an exact manifest before publication.
       - name: Verify release manifest
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && startsWith(github.ref, 'refs/heads/release/') }}
         shell: powershell
         run: ./tools/Build-Release.ps1 -Version 4.0.0 -CheckOnly
       - name: Parser and static analysis
