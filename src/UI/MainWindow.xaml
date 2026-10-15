@@ -759,7 +759,7 @@
                                 <TextBlock x:Name="TxtPowerPlanStatus" Text="Güç planları ilk açılışta okunuyor…" TextWrapping="Wrap" Foreground="#B5BECE" Margin="0,6,0,0"/>
                                 <Button x:Name="BtnRefreshPowerPlans" Style="{StaticResource Btn}" Content="Kurulu planları yenile" HorizontalAlignment="Left" Margin="0,6,0,8"/>
                                 <Button x:Name="BtnSelectIslc" Style="{StaticResource Btn}" Content="ISLC uygulama dosyasını seç…" HorizontalAlignment="Left"/>
-                                <TextBlock x:Name="TxtIslcProfile" Text="ISLC 1.0.4.8: resmî paketi kalıcı bir klasöre çıkartıp içindeki uygulamayı seçin. RAM'e göre başlangıç profili gösterilecek; otomatik başlatmak için aşağıdaki ISLC ayarını önizleyip uygulayın." TextWrapping="Wrap" Foreground="#B5BECE" Margin="0,6,0,0"/>
+                                <TextBlock x:Name="TxtIslcProfile" Text="ISLC 1.0.4.8 pakete dahildir. İsterseniz başka bir kalıcı klasördeki ISLC uygulamasını da seçebilirsiniz. RAM'e göre başlangıç profili gösterilecek; otomatik başlatmak için aşağıdaki ISLC ayarını önizleyip uygulayın." TextWrapping="Wrap" Foreground="#B5BECE" Margin="0,6,0,0"/>
                             </StackPanel>
                             <StackPanel x:Name="UserPreferencePanel" Visibility="Collapsed" Margin="0,0,0,12">
                                 <TextBlock Text="Alt menü gecikmesi (ms) — süreyi seçip ilgili ayarı işaretleyin:" Foreground="#B5BECE" Margin="0,0,0,6"/>

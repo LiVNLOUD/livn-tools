@@ -3,7 +3,7 @@
 
 Set-StrictMode -Version 2.0
 
-$script:LtVersion = '4.0.0'
+$script:LtVersion = '4.0.1'
 
 $here = $PSScriptRoot
 foreach ($f in @(

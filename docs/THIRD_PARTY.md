@@ -1,3 +1,21 @@
+# Üçüncü taraf bileşenler
+
+## v4.0.1 dağıtım kapsamı — 15 Ekim 2026
+
+Kullanıcının açık isteğiyle üç mevcut güç planı ve resmî ISLC 1.0.4.8 tam paketi standart ZIP ve çevrim içi kuruluma dahil edilmiştir. `Build-Release.ps1` varsayılanı `_Files` içeriğini korur; isteğe bağlı minimal paket için `-IncludeThirdParty:$false` kullanılabilir.
+
+ISLC kaynak: https://download.wagnardsoft.com/ISLC/ISLC%20v1.0.4.8.exe
+
+Orijinal paketin SHA-256 değeri: `599315a1852b951e0adae2be46fce30bb32aab7f8a4c9112471a5a88320e3085`. Uygulama PE sürümü: **1.0.4.8**. Uygulama SHA-256: `11e4ed0b322adced3214c5a73ca1e807140341be6327b2a47a4c52434e73322f`.
+
+Paket değişmeden açılmıştır; tüm dil dosyaları, DLL, PDB, ReadMe, LICENSE ve THIRD-PARTY-NOTICES korunur. Orijinal dağıtım `_Files/ISLC/ISLC-v1.0.4.8-original.exe` adıyla ayrıca bulunur. ISLC lisansı ücretsiz, tam ve değiştirilmemiş yeniden dağıtıma koşullu izin verir; tam koşullar `_Files/ISLC/LICENSE.txt` içindedir. Wagnardsoft ile bağlantı veya destek ilişkisi iddia edilmez.
+
+ISLC otomatik çalıştırılmaz; mevcut başlangıç görevi varsa öncelikle onun yolu kullanılır. ISLC’nin kendi timer ayarları değiştirilmez. Güç planlarının önceki SHA-256 sabitlemesi korunur.
+
+## Tarihsel değerlendirme (v4.0.0 ve öncesi)
+
+Aşağıdaki kayıtlar eski paket kapsamını anlatır; güncel dağıtım kapsamı yukarıdadır.
+
 # Varsayılan dağıtım kapsamı
 
 **1 Ekim 2026 güncellemesi:** Kullanıcının açık isteğiyle üç güç planı dosyası (`Bitsum-Highest-Performance.pow`, `HybredPowerPlans/HybredLowLatencyHighPerf.pow`, `HybredPowerPlans/HybredLowLatencyBalanced.pow`) kullanıcının kendi v3.5 paketinden kaynak projeye geri kondu. SHA-256 değerleri aşağıdaki tablodaki kayıtlarla birebir aynıdır ve kodda sabitlenmiştir: destek kontrolünde ve içe aktarma anında yeniden hesaplanır; eşleşmeyen dosya içe aktarılmaz. Web'den yeni veya "daha iyi" plan dosyası indirilmedi/eklenmedi. ISLC ikilisi geri konmadı.

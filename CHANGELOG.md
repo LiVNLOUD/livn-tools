@@ -1,4 +1,11 @@
-﻿# 4.0.0 — 13 Ekim 2026
+﻿# v4.0.1 — 15 Ekim 2026
+
+- Üç mevcut güç planı standart ZIP ve çevrim içi kuruluma geri eklendi.
+- Resmî ISLC 1.0.4.8 tam paketi; dil dosyaları, DLL, lisans ve orijinal dağıtımıyla eklendi.
+- Paketleme varsayılanı `_Files` içeriğini korur; kurucu dosyaları boyut ve SHA-256 ile doğrular.
+- Ana kurulum adresi `https://livn.tr/win`.
+
+# 4.0.0 — 13 Ekim 2026
 
 - Windows PowerShell 5.1: disk belleği snapshot sıralaması ve ağ ölçüm geçmişinin JSON dizi okuması düzeltildi.
 - Kurtarma kitinde başarısız/eksik Livn kopyası artık başarılı raporlanmaz; zorunlu uygulama dosyaları denetlenir.

@@ -33,19 +33,19 @@ Describe 'Release builder validation' {
             $file.Sha256 | Should -Be (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash
         }
     }
-    It 'Excludes optional third-party files by default, but retains source files' {
+    It 'Includes bundled third-party files by default and retains source files' {
         $optional = Join-Path $fixture '_Files/vendor.exe'
         [IO.File]::WriteAllText($optional, 'fixture executable, not runnable')
         & $builder -Version 9.9.9
         . $installer
-        @($LtRelease.Files | Where-Object { $_.Path -like '_Files/*' }).Count | Should -Be 0
+        @($LtRelease.Files | Where-Object { $_.Path -like '_Files/*' }).Count | Should -Be 1
         Test-Path $optional | Should -BeTrue
     }
-    It 'Includes optional files only with an explicit packaging choice' {
+    It 'Allows an explicit minimal package without bundled files' {
         [IO.File]::WriteAllText((Join-Path $fixture '_Files/vendor.exe'), 'fixture')
-        & $builder -Version 9.9.9 -IncludeThirdParty
+        & $builder -Version 9.9.9 -IncludeThirdParty:$false
         . $installer
-        @($LtRelease.Files | Where-Object { $_.Path -eq '_Files/vendor.exe' }).Count | Should -Be 1
+        @($LtRelease.Files | Where-Object { $_.Path -eq '_Files/vendor.exe' }).Count | Should -Be 0
     }
     It 'Builds the default manifest without an optional files directory' {
         Remove-Item (Join-Path $fixture '_Files') -Recurse -Force

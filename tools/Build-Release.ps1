@@ -18,7 +18,7 @@ param(
     [ValidatePattern('^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$')][string]$Repo = 'LiVNLOUD/livn-tools',
     [switch]$Zip,
     [switch]$CheckOnly,
-    [switch]$IncludeThirdParty
+    [switch]$IncludeThirdParty = $true
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
@@ -50,9 +50,9 @@ foreach ($notice in @('docs/THIRD_PARTY.md', 'docs/DEVELOPMENT_STATUS.md', 'docs
     if (Test-Path -LiteralPath (Join-Path $root $notice) -PathType Leaf) { $include += $notice }
 }
 $include += @(Get-ChildItem -Path (Join-Path $root 'src') -Recurse -File | ForEach-Object { $_.FullName.Substring($root.Length + 1) -replace '\\', '/' })
-if ($IncludeThirdParty) {
+if ($IncludeThirdParty -and (Test-Path -LiteralPath (Join-Path $root '_Files') -PathType Container)) {
     # Explicit packaging choice; this switch does not establish redistribution rights.
-    $include += @(Get-ChildItem -Path (Join-Path $root '_Files') -Recurse -File | Where-Object { $_.Name -ne '.gitkeep' -and $_.Extension -ne '.pdb' } | ForEach-Object { $_.FullName.Substring($root.Length + 1) -replace '\\', '/' })
+    $include += @(Get-ChildItem -Path (Join-Path $root '_Files') -Recurse -File | Where-Object { $_.Name -ne '.gitkeep' } | ForEach-Object { $_.FullName.Substring($root.Length + 1) -replace '\\', '/' })
 }
 
 $files = foreach ($rel in ($include | Sort-Object -Unique)) {

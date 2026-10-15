@@ -159,7 +159,7 @@ Kullanıcıya özel registry ayarları yalnızca işlem hesabı masaüstü oturu
 
 Özellik ve kalite/güvenlik güncellemesi ertelemesi ayrı seçeneklerdir; hazır seçimlere dahil değildir. Eski özellik erteleme GPO yöntemi Windows 11'de kapalıdır. Kalite ertelemesi güvenlik yamalarını da geciktirir. Registry kaydının doğrulanması etkin Windows Update/MDM takviminin doğrulandığı anlamına gelmez.
 
-Bitsum ve iki Hybred plan dosyası kaynak paketin `_Files` klasöründedir; içe aktarmadan önce sabitlenmiş SHA-256 ile doğrulanır, değiştirilmiş dosya içe aktarılmaz. `win.ps1` ile ağdan kurulum ve `Build-Release.ps1` varsayılanı lisans durumu açık olduğu için bu dosyaları hâlâ içermez; o kurulumlarda ilgili seçenekler gerekçesiyle kullanılamaz görünür. ISLC ikilisi pakette yoktur.
+Bitsum ve iki Hybred plan dosyası kaynak paketin `_Files` klasöründedir; içe aktarmadan önce sabitlenmiş SHA-256 ile doğrulanır, değiştirilmiş dosya içe aktarılmaz. v4.0.1 itibarıyla `win.ps1`, standart ZIP ve `Build-Release.ps1` varsayılanı bu üç planı ve ISLC 1.0.4.8 tam paketini içerir. ISLC otomatik çalıştırılmaz.
 
 
 ### İsteğe bağlı performans araçları

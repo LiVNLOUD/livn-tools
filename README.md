@@ -34,7 +34,7 @@ Sayılar katalog kapsamını gösterir; her seçenek her bilgisayarda kullanıla
 
 ### ZIP ile kullan
 
-1. [Son sürümden](https://github.com/LiVNLOUD/livn-tools/releases/latest) **`LivnTools-4.0.0.zip`** dosyasını indir.
+1. [Son sürümden](https://github.com/LiVNLOUD/livn-tools/releases/latest) **`LivnTools-4.0.1.zip`** dosyasını indir.
 2. ZIP'i ayrı bir klasöre çıkar. ZIP içinden çalıştırma.
 3. **`LivnTools.bat`** dosyasını aç ve yönetici isteğini onayla.
 4. Sistem Kontrolü'nü incele; istediğin işlemleri seç ve **önizlemeyi kontrol ederek** uygula.
@@ -49,10 +49,10 @@ Resmî kısa adres her zaman en güncel yayımlanmış release’i indirir:
 irm https://livn.tr/win | iex
 ```
 
-Belirli bir sürümü kurmak için alternatif adres (v4.0.0):
+Belirli bir sürümü kurmak için alternatif adres (v4.0.1):
 
 ```powershell
-irm https://raw.githubusercontent.com/LiVNLOUD/livn-tools/v4.0.0/win.ps1 | iex
+irm https://raw.githubusercontent.com/LiVNLOUD/livn-tools/v4.0.1/win.ps1 | iex
 ```
 
 Kurucu sürüme sabit dosyaları indirir; boyut ve SHA-256 doğrulanmadan mevcut kurulumu değiştirmez.
@@ -66,7 +66,7 @@ Kurucu sürüme sabit dosyaları indirir; boyut ve SHA-256 doğrulanmadan mevcut
 Güncelleme kullanıcı verilerini silmez. Önceki uygulama `app.prev` olarak saklanır. Önceki kuruluma dönmek için:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/LiVNLOUD/livn-tools/v4.0.0/win.ps1))) -Rollback
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/LiVNLOUD/livn-tools/v4.0.1/win.ps1))) -Rollback
 ```
 
 > SHA-256 indirme bütünlüğünü denetler; yayıncı imzası değildir. `livn.tr/win` en güncel release’i takip eder; sürüme sabit GitHub adresi yalnız belirtilen sürümü kurar.
@@ -103,7 +103,7 @@ DryRun bellek içindeki örnek sistemle açılır: gerçek ayarlar değiştirilm
 
 Temizlik, kurulum/kaldırma, sürücü kurulumu ve kullanıcı betikleri ayar geri alma sistemi kapsamında değildir. Birden çok ayarın uygulanması tek bir atomik işlem değildir. [Geri alma kapsamı →](docs/SUPPORT_MATRIX.md#geri-alma-kapsamı)
 
-## v4.0.0 ile gelenler
+## v4.0.1 ile gelenler
 
 - Modüler motor, işlem günlüğü ve durum doğrulaması.
 - Format öncesi kurtarma kiti ve format sonrası uygulama/profil akışı.
@@ -121,7 +121,7 @@ Temizlik, kurulum/kaldırma, sürücü kurulumu ve kullanıcı betikleri ayar ge
 
 Kurtarma kiti tam disk imajı değildir. Belgeler, fotoğraflar, tarayıcı verileri ve lisans anahtarları ayrıca yedeklenmelidir. Wi-Fi dışa aktarımı seçilirse parolalar kitte düz metin saklanır. Oyun kayıt kapsamı `Saved Games` ve `Belgeler/My Games` ile sınırlıdır.
 
-ISLC ve üçüncü taraf güç planları standart yayın ZIP'ine dahil değildir. Kurulu planlar seçilebilir; üretici bağlantıları arayüzdedir. [Üçüncü taraf kapsamı →](docs/THIRD_PARTY.md)
+Standart ZIP ve çevrim içi kurulum, `_Files` altında üç güç planını (Bitsum Highest Performance, Hybred Low Latency High Performance ve Balanced) ve ISLC 1.0.4.8’in tam paketini içerir. ISLC kendiliğinden çalıştırılmaz; başlatma seçeneğini önizleyip uygulaman gerekir. [Üçüncü taraf kapsamı →](docs/THIRD_PARTY.md)
 
 ## Geliştirme ve doğrulama
 
@@ -133,7 +133,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Invoke-Tests.ps1
 powershell -NoProfile -STA -File .\tools\Invoke-WindowsCheck.ps1
 
 # Dağıtım ZIP'i
-powershell -NoProfile -File .\tools\Build-Release.ps1 -Version 4.0.0 -Zip
+powershell -NoProfile -File .\tools\Build-Release.ps1 -Version 4.0.1 -Zip
 ```
 
 Linux kontrolünde **518 test geçti**, statik analiz **0 hata / 0 uyarı** verdi. Windows PowerShell 5.1, WPF ve paket bütünlüğü GitHub Actions üzerinden ayrıca denetlenir; güncel sonuç üstteki rozetten açılır. Otomatik testler gerçek donanımda bütün ayarların etkisini veya performans artışını kanıtlamaz.
