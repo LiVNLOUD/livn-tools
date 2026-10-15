@@ -55,7 +55,10 @@ if ($IncludeThirdParty -and (Test-Path -LiteralPath (Join-Path $root '_Files') -
     $include += @(Get-ChildItem -Path (Join-Path $root '_Files') -Recurse -File | Where-Object { $_.Name -ne '.gitkeep' } | ForEach-Object { $_.FullName.Substring($root.Length + 1) -replace '\\', '/' })
 }
 
-$files = foreach ($rel in ($include | Sort-Object -Unique)) {
+# Keep manifest order stable across OS cultures and punctuation in vendor names.
+$orderedPaths = [string[]]@($include | Select-Object -Unique)
+[Array]::Sort($orderedPaths, [StringComparer]::OrdinalIgnoreCase)
+$files = foreach ($rel in $orderedPaths) {
     $full = Join-Path $root $rel
     if (-not (Test-Path -LiteralPath $full -PathType Leaf)) { throw "Dagitim dosyasi bulunamadi: $rel" }
     $i = Get-Item -LiteralPath $full
